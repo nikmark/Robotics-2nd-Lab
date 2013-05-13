@@ -1,0 +1,187 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb, enumerate, indentfirst, booktabs, listings, colortbl, tabularx, graphicx}
+\usepackage{emp} 
+\usepackage{hyperref}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{longtable}
+
+% include the web pages examined in the bibliography
+\makeatletter
+\let\@orig@endthebibliography\endthebibliography
+\renewcommand\endthebibliography{
+\xdef\@kept@last@number{\the\c@enumiv}
+\@orig@endthebibliography}
+\newenvironment{thesitography}[1]
+%{\def\bibname{Siti consultati}% Classe book o report
+{\def\refname{Consulted Sites}% Classe article
+\thebibliography{#1}%
+\setcounter{enumiv}{\@kept@last@number}%
+}
+    {\@orig@endthebibliography}
+\makeatother
+
+\definecolor{orange}{rgb}{1,0.5,0}
+\lstnewenvironment{java}{\lstset{basicstyle=\ttfamily,
+stepnumber=2, numbersep=5pt, language=java, %frame=shadowbox, 
+keywordstyle=\color{red}\bfseries, commentstyle=\color{blue}, 
+stringstyle=\color{orange}}}{}
+
+\newcolumntype{G}{>{\columncolor[gray]{0.8}}c}
+
+\setlength{\parindent}{3mm}
+\newcommand{\grammarindent}[1][1]{\hspace*{#1\parindent}\ignorespaces} 
+\renewcommand{\thefigure}{\Roman{figure}}
+
+% set margin
+%\usepackage{vmargin}
+%\setpapersize{A4}
+%\setmarginsrb{25mm}{5mm}{25mm}{8mm}
+%             {0mm}{10mm}{0mm}{10mm}
+
+
+\title{\bf{Strategies for planning and following \\of paths by mobile robots. \\ Robotics, 2nd lab. assignment}}
+\author{\href{mailto:marchi.nicolo@gmail.com}{Nicolò Marchi} - \href{mailto:folkert.franzen@gmx.de}{Folkert Franzen}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This is the report for the first assignment of the Robotics course. The task is the creation of the direct and inverse kinematics of the \emph{ROB3/TR5} manipulator. This report shows how we achieved this task and the main practical/technical choices during the development phase. The report is divided in 4 sections. 
+
+The first section describes the frames assignment and the Euler's transformations following the Denavit-Hartenberg convention.
+
+In the second and third section describe how we have implemented the direct and the inverse kinematics for the manipulator: how it's possible to find the position and orientation of the final manipulator using the given angles of each joint in the first case. And the second case, about the inverse kinematics, shows how to reach a certain position and orientation for the gripper using the joint angles.
+
+The fourth section introduces some tests of our architecture, for showing how it works and checking the correctness of the computations.
+
+In the last section we discuss some conclusions about the work.
+
+In the appendix there is a little manual that explains how one can use the functions that we have implemented.
+
+\section{Reference frame and workspace}
+
+\section{Software architecture}
+\subsection{Path generation}
+\subsection{Trajectory generation}
+\subsection{Localization of the robot}
+The localization of the robot inside the workspace is based on odometry data provided by the measurement gadgets of the robot. The given function for reading the odometry data from the robot provides the robot position and orientation. For using this data for controlling the robot it has to be tranformed to the workspace frame and one has to care about the odometry errors.
+\subsubsection*{Odometry errors:}
+The determination of the robot position by the odometry data is not very accurate. This is caused by errors that occur - among others - due to the following conditions:
+
+\begin{itemize}
+\item The geometry of the wheels: they are not perfectly round, the radius is not measured perfectly and can change because of attrition
+\item The nature of the floor: flatness imperfections and slippage
+\item Imperfect geometry of robot chassis and errors in measurement of this geometry
+\item Imbalanced distribution of the weight of the robot
+\end{itemize}
+
+To compensate these errors in the odometry data, a common approach is to use a Kalman filter. This type of filter is suitable for linear dynamic systems. The idea is to use all formerly measured data for estimation to get a more accurate value. In this way it can be used to correct the data measured by the odometry gadgets of the robot. In this case an extended Kalman filter was used.
+
+\subsection{Collision avoidance}
+\subsection{Graphical user interface}
+
+\section{Tests / experimental results}
+
+\section{Conclusion}
+All the functions has been implemented using MATLAB. The results obtained are quite satisfactory to validate the suitability of the theoretical kinematics models to the ROB3/TR5 serial manipulator. All the functions seems to work correctly. 
+The results of the functions, besides being consistent, seems correct and satisfactory for both functions; the position and orientation of the end-effector was always computed correctly, as far as measurement and calibration precision allowed. As for the inverse kinematics, it seems to obtain all possible solutions for any given input. When there is no solution available it detects so, but the most common case is that two possible mathematical solutions are available. In practice, the manipulator can only perform one of them due to its physical constraints.
+It seems like there are some errors that arise in converting degree values into the $[0\dots255]$ interval values, and about the normal usury of the robot, which can distort the teoric values from the observed movement of the robot. 
+
+A precise calibration system could avoid this problem and improve the quality of the results.
+
+\begin{itemize}
+\item $a_{i-1}$: distance from $Z_{i-1}$ to $Z_{i}$ along $X_{i-1}$
+\item $\alpha_{i-1}$: angle between $Z_{i-1}$ and $Z_{i}$ around $X_{i-1}$
+\item $d_{i}$: distance from $X_{i-1}$ to $X_{i}$ along $Z_{i}$
+\item $\theta_{i}$: angle between $X_{i-1}$ and $X_{i}$ around $Z_{i}$
+\end{itemize}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{pic_frames.pdf}
+\caption{Configuration of the used frames representing the manipulator}
+\label{fig:pic_frames}
+\end{figure}
+
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$i$ & $\alpha_{i-1}$ & $a_{i-1}$ & $d_{i}$ & $\theta_{i}$ \\
+\hline
+1 & $0^\circ$ & $0$ & $275$ & $\theta_{1}$ \\
+2 & $-90^\circ$ & $0$ & $0$ & $\theta_{2}$ \\
+3 & $0^\circ$ & $200$ & $0$ & $\theta_{3}$ \\
+4 & $0^\circ$ & $130$ & $0$ & $\theta_{4}$ \\
+5 & $90^\circ$ & $0$ & $130$ & $\theta_{5}$ \\
+\hline
+\end{tabular}
+\caption{D-H parameters for the ROB3/TR5 manipulator}
+\end{center}
+\end{table}
+
+
+\begin{equation}
+_{i-1}^{\,\,\,\,\,\,\,i}T=\left[\begin{array}{cccc}
+c_{\theta_{i}} & -s_{\theta_{i}} & 0 & a_{i-1}\\
+s_{\theta_{i}}c_{\alpha_{i-1}} & c_{\theta_{i}}c_{\alpha_{i-1}} & -s_{\alpha_{i-1}} & -s_{\alpha_{i-1}}d_{i}\\
+s_{\theta_{i}}s_{\alpha_{i-1}} & c_{\theta_{i}}s_{\alpha_{i-1}} & c_{\alpha-1} & c_{\alpha-1}d_{i}\\
+0 & 0 & 0 & 1
+\end{array}\right]
+\label{eq:transfMatrix}
+\end{equation}
+\newline
+
+
+
+
+
+\appendix
+\section{Manual}
+\subsection{Use of the Direct Kinematics}
+\label{subsec:direct_kin}
+The function that computes the direct kinematicts is called {\tt DirectKinematics}. The signature of the function is as follows.
+\begin{verbatim}
+[ Position, Orientation ] = DirectKinematics( theta )
+\end{verbatim}
+
+The input value \emph{theta} is an array that contains the 5 angles of the joints (except for the end-effector). The output values are two arrays, \emph{Position} and \emph{Orientation}, that contain respectively the position (x-, y- and z-coordinates in the global frame) and the orientation (angles around x-,y- and z-axis of the global frame) of the of the end-effector.
+
+\subsection{Use of the Inverse Kinematics}
+The function that computes the inverse kinematics is called {\tt InverseKinematics}. The signature of the function is as follows.
+\begin{verbatim}
+[ Angles ] = InverseKinematics( Position, Orientation )
+\end{verbatim}
+
+%(compare output vectors in section (\ref{subsec:direct_kin}))
+The input values, \emph{Position} and \emph{Orientation}, are two arrays that contain the position and the orientation that we want to positioning the end-effector. Precisely the \emph{Orientation} array contains only two values, the angles $\beta$ and $\gamma$, for the reason explained in (\ref{sec:inverse}). The output value is an array called \emph{Angles} that contains the solutions of the 5 angles for the joints for moving the end-effector in the desired position and orientation. 
+It is possible that not all the solutions are feasible. For check if a solution is feasible, use the function described in (\ref{subsec:feasible}).
+
+\subsection{Use of the function for check the angles}
+\label{subsec:feasible}
+The function that checks if an array of angles is feasible or not is called {\tt transform\_ang\_to\_rob\_val}.
+\begin{verbatim}
+[ rob_val ] = transform_ang_to_rob_val( theta )
+\end{verbatim}
+
+The input value is an array called \emph{theta} that contains the five angles for the joints. The function checks if these values are feasible for the robot, and translate the values in an integer included in the interval $[0\dots255]$.
+The output value it's called \emph{rob\_val}, and will be an array with the values ready for send to the robot, or an error message if the solution passed in input is not feasible.
+\pagebreak
+\begin{thebibliography}{9}
+\bibitem{DHarticle} Denavit~J. Hartenberg~R.S. (1955),    
+\newblock ``A kinematic notation for lower-pair mechanisms based on matrices'', \emph{Trans ASME J. Appl.}
+\end{thebibliography}
+\begin{thesitography}{9}
+\bibitem{DH} Denavit-Hartenberg convention, 
+\url{http://en.wikipedia.org/wiki/Denavit-Hartenberg_parameters}
+\end{thesitography}
+
+\end{document}
