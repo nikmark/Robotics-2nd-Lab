@@ -84,8 +84,6 @@ The determination of the robot position by the odometry data is not very accurat
 To compensate these errors in the odometry data, a common approach is to use a Kalman filter. This type of filter is suitable for linear dynamic systems. The idea is to use all formerly measured data for estimation to get a more accurate value. In this way it can be used to correct the data measured by the odometry gadgets of the robot. In this case an extended Kalman filter was used.
 
 \subsection{Collision avoidance}
-To detect obstacles on the planned route, the sonar sensors of the robot are used. When the measured distance is less than a pre-defined value, the software reacts by calculating a bypass-route. The idea is to move the robot perpendicular to the direction to the obstacle. By introducing a smoothing factor this bypassing procedure is performed more elegant and effective.
-
 \subsection{Graphical user interface}
 
 \section{Tests / experimental results}

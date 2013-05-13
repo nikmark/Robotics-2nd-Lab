@@ -22,7 +22,7 @@ function varargout = GUI_Mobile_Robot(varargin)
 
 % Edit the above text to modify the response to help GUI_Mobile_Robot
 
-% Last Modified by GUIDE v2.5 11-May-2013 14:38:17
+% Last Modified by GUIDE v2.5 13-May-2013 18:32:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -170,9 +170,9 @@ end
 
 
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+% --- Executes on button press in but_reset.
+function but_reset_Callback(hObject, eventdata, handles)
+% hObject    handle to but_reset (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -184,6 +184,10 @@ initialize_gui(hObject, handles, false);
 function initialize_gui(fig_handle, handles, isreset)
 % Initializing the GUI: setting default values
 % also usable for resetting the GUI to default data
+
+% define some global settings
+define_global_settings;
+global timestep 
 
 %% default values
 
@@ -197,13 +201,77 @@ theta_init = -90;
 % timestep / s
 time_step_init = 1;
 
+% speed / m/s
+speed_init = 0.05;
 
 % set values to edit boxes in GUI
 set(handles.ed_x_init, 'String', x_init);
 set(handles.ed_y_init,  'String', y_init);
 set(handles.ed_theta_init, 'String', theta_init);
 set(handles.ed_timestep, 'String', time_step_init);
+set(handles.ed_speed, 'String', speed_init);
 
 % Update handles structure
 guidata(handles.figure1, handles);
 
+
+
+function ed_output_Callback(hObject, eventdata, handles)
+% hObject    handle to ed_output (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of ed_output as text
+%        str2double(get(hObject,'String')) returns contents of ed_output as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function ed_output_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ed_output (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in but_move_robot.
+function but_move_robot_Callback(hObject, eventdata, handles)
+% hObject    handle to but_move_robot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% set values to edit boxes in GUI
+
+% get current values from GUI
+x_init = str2double(get(handles.ed_x_init, 'String'));
+y_init = str2double(get(handles.ed_y_init, 'String'));
+theta_init = str2double(get(handles.ed_theta_init, 'String'));
+timestep = str2double(get(handles.ed_timestep, 'String'));
+speed_init = str2double(get(handles.ed_speed, 'String'));
+
+
+
+
+function ed_speed_Callback(hObject, eventdata, handles)
+% hObject    handle to ed_speed (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of ed_speed as text
+%        str2double(get(hObject,'String')) returns contents of ed_speed as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function ed_speed_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ed_speed (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
