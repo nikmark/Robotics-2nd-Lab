@@ -39,7 +39,7 @@ a_SCALE = .5;
 % 
 % F = eye(3);
 % 
-% % Previsão.
+% Previsão.
 % xhat = zeros(3,1);
 % 
 % % Medição prevista.
