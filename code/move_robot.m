@@ -32,7 +32,11 @@ loop_ind = 1;
 while ~(error||done)  % movement loop
   
     % avoid collisions with obstacles using sonar
-    [omega, tilt] = collision_avoidance(tilt,speed_init);
+    [omega, tilt,sonar_data] = collision_avoidance(tilt,speed_init);
+    
+    % plot current sonar data
+    h_sonar_plot = sonar_plot(handles.ax_sonar,sonar_data);
+    % drawnow
     
     % move robot
     tic;

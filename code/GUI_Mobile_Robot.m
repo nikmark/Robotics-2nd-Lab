@@ -22,7 +22,7 @@ function varargout = GUI_Mobile_Robot(varargin)
 
 % Edit the above text to modify the response to help GUI_Mobile_Robot
 
-% Last Modified by GUIDE v2.5 14-May-2013 14:32:50
+% Last Modified by GUIDE v2.5 14-May-2013 18:37:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -189,7 +189,8 @@ function initialize_gui(fig_handle, handles, isreset)
 define_global_settings;
 global timestep 
 
-%% default values
+% default values
+%%%%%%%%%%%%%%%%
 
 % position / m
 x_init = 2; 
@@ -211,6 +212,10 @@ map_filename = 'workspace_map.bmp';
 room_width = 28.5;
 room_height = 28.5;
 
+
+% set initial data
+%%%%%%%%%%%%%%%%%%%%
+
 % set values to edit boxes in GUI
 set(handles.ed_x_init, 'String', x_init);
 set(handles.ed_y_init,  'String', y_init);
@@ -220,6 +225,14 @@ set(handles.ed_speed, 'String', speed_init);
 set(handles.ed_map_filename, 'String', map_filename);
 set(handles.ed_room_width, 'String', room_width);
 set(handles.ed_room_height, 'String', room_height);
+
+set(handles.txt_workspace_output,'String',[]);
+
+cla(handles.ax_workspace,'reset');
+set(handles.ax_workspace,'Visible','Off');
+
+cla(handles.ax_sonar,'reset');
+set(handles.ax_sonar,'Visible','Off');
 
 % Update handles structure
 guidata(handles.figure1, handles);
@@ -262,6 +275,9 @@ theta_init = str2double(get(handles.ed_theta_init, 'String'));
 timestep = str2double(get(handles.ed_timestep, 'String'));
 speed_init = str2double(get(handles.ed_speed, 'String'));
 map_filename = get(handles.ed_map_filename, 'String');
+
+set(handles.ax_sonar,'Visible','On');
+
 
 
 
@@ -371,6 +387,8 @@ imgInfo=imfinfo(workspace_data.map_filename);
 workspace_data.map_height=imgInfo.Height;
 workspace_data.map_width=imgInfo.Width;
 
+% output info
+set(handles.txt_workspace_output,'String',[get(handles.txt_workspace_output,'String');{'map loaded.'}]);
 
 % --- Executes on button press in but_pick_points.
 function but_pick_points_Callback(hObject, eventdata, handles)
@@ -382,6 +400,8 @@ global workspace_data
 workspace_data.room_width = str2double(get(handles.ed_room_width, 'String'));
 workspace_data.room_height = str2double(get(handles.ed_room_height, 'String'));
 
+% output info
+set(handles.txt_workspace_output,'String',[get(handles.txt_workspace_output,'String');{' '};{'Pick points by left mouse-click and finish by pressing RETURN ...'}]);
 
 % collecting user defined point (by graphical clicking on axes)
 % [x_sel,y_sel] = ginput
@@ -415,6 +435,9 @@ y_room = y_sel./workspace_data.map_height.*workspace_data.room_height;
 workspace_data.sel_points_px = [x_sel y_sel];
 workspace_data.sel_points_m = [x_room y_room];
 
+% output info
+temp = get(handles.txt_workspace_output,'String');
+set(handles.txt_workspace_output,'String',[temp(1:end-2); {[num2str(length(x_sel)) ' points picked.']}]);
 
 function ed_room_width_Callback(hObject, eventdata, handles)
 % hObject    handle to ed_room_width (see GCBO)
@@ -459,3 +482,40 @@ function ed_room_height_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+
+function ed_workspace_output_Callback(hObject, eventdata, handles)
+% hObject    handle to txt_workspace_output (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of txt_workspace_output as text
+%        str2double(get(hObject,'String')) returns contents of txt_workspace_output as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function txt_workspace_output_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to txt_workspace_output (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in but_gen_path.
+function but_gen_path_Callback(hObject, eventdata, handles)
+% hObject    handle to but_gen_path (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton9.
+function pushbutton9_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton9 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

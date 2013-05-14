@@ -1,4 +1,4 @@
-function [ omega, tilt ] = collision_avoidance(tilt,v_ref)
+function [ omega, tilt, sonar_data ] = collision_avoidance(tilt,v_ref)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
